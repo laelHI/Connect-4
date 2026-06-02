@@ -25,5 +25,8 @@ public class Methods {
             return false;
         }
     }
-    
+    //make a play again method
+    public void playAgain(String in){
+        
+    }
 }
