@@ -60,6 +60,7 @@ public class Methods {
         }
     }
     public void play(Game g1, Scanner scan, int player){
+        System.out.println("Player " + player + " enter a column number to drop your piece on the board");
         int move = scan.nextInt();
         while (g1.checkmove(move) == -1) {
             move = scan.nextInt();
