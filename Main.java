@@ -1,89 +1,75 @@
-//APCSA final project
-
 import java.util.Scanner;
-
 public class Main{
     public static Scanner scan = new Scanner(System.in);
-    private static int move;
     public static void main(String args[]) {
+        boolean playAgain = true;
+        
         Game g1;
-        Methods run = new Methods(); 
+        Methods run; 
         
-        System.out.println("\nWelcome to connect 4!");
-        
-        //create board 
-        System.out.println("Would you like to create a custom board? \ny/n...");
-        
-        String input  = scan.next();
-        while (run.yesOrNo(input) == false){
-            System.out.println("Would you like to create a custom board? \n\n\ty/n...");
-            input = scan.next();
-        }
-        if (run.ans.equals("yes")){
-            System.out.println("You picked yes. Please state the dimensions");
-            System.out.println("Number of rows: ");
-            int r = scan.nextInt();
-            System.out.println("Number of columns: ");
-            int c = scan.nextInt();
+        System.out.println("\nWelcome to connect 4!\n");
+
+        while(playAgain){
+            //create board and ask for dimensions
+            run = new Methods();
+            g1 = run.makeGame(scan);
+
+            g1.printBoard();
             
-            g1 = new Game(r,c);
-        }
-        else{
-            g1 = new Game();
-        }
-        
-        g1.printBoard();
+            playAgain = false;
 
-        System.out.println("Choose a mode pick 1 or 2:");
-        System.out.println("Two player \t or \t Play against the computer");
-        
-        boolean valid = true;
-        while (valid){
-            int mode = scan.nextInt();
+            System.out.println("Choose a mode pick 1 or 2:");
+            System.out.println("Two player \t or \t Play against the computer");
+            
+            int mode = 0;
+            while (mode != 1 && mode != 2) {
+                System.out.println("Choose a mode pick 1 or 2:");
+                mode = scan.nextInt();
+            }
+            g1.setMode(mode);//edit for letters as well
             if(mode == 1){
-                g1.setMode(mode);
                 System.out.println("you picked 1");
-                //
-                move = scan.nextInt();
-                g1.twoPlayer(move, 1);
-                move = scan.nextInt();
-                g1.twoPlayer(move, 2);
-                g1.printBoard();
-                while (g1.matchWon() == false){////////////////////////idk
-                    move = scan.nextInt();
-                    g1.twoPlayer(move, 1);
-                    move = scan.nextInt();
-                    g1.twoPlayer(move, 2);
-                    g1.printBoard();
+                                
+                while (g1.matchWon() == false){
+                    run.play(g1, scan, 2);
+                    if (g1.matchWon() == true){
+                        break;
+                    }
+                    if (g1.tie()){
+                        break;
+                    }
+                    run.play(g1, scan, 1);
                 }
-                //fix the match logic so that it checks after every turn
-                System.out.println("The match is over... Loading results... \nCongradulations! " + g1.getWinner() + " won");
-
-                // valid = false;
+                System.out.println("The match is over... Loading results... \nCongratulations! " + g1.getWinner() + " won");
+                playAgain = run.playAgain(scan, g1);
             }
             else if (mode == 2){
-                g1.setMode(mode);
                 System.out.println("you picked 2");
-                //
-                move = scan.nextInt();
-                g1.computer(move);
-                g1.printBoard();
-                while (g1.matchWon() == false){
-                    move = scan.nextInt();
-                    g1.computer(move);
+                while (g1.matchWon() == false) {
+                    run.play(g1, scan, 1);
+                    if (g1.matchWon() == true){
+                        break;
+                    }
+                    if (g1.tie()){
+                        break;
+                    }
+                    g1.computer();
                     g1.printBoard();
+                    if (g1.matchWon() == true){
+                        break;
+                    }
+                    if (g1.tie()){
+                        break;
+                    }
                 }
-                //fix
-                System.out.println("The match is over... Loading results... \nCongradulations! " + g1.getWinner() + " won");
-                // valid = false;
-            } 
+                System.out.println("The match is over... Loading results... \nCongratulations! " + g1.getWinner() + " won");
+                playAgain = run.playAgain(scan, g1);
+            }
             else{
                 System.out.println("Sorry thats not a valid input. Please enter the number 1 or the number 2");
             }
         }
-        
     }
-    
 }
 
 //

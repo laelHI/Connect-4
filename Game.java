@@ -6,6 +6,7 @@ public class Game{
     private static int playerTwoWins;
     private String winner;
     private String mode;
+    private int winningNum;
     //creating the game board
     public Game(){
         rows = 6;
@@ -13,11 +14,27 @@ public class Game{
         playerOneWins = 0;
         playerTwoWins = 0;
         board = new int[rows][cols];
+        winningNum = 4;
     }
     public Game(int rowsize, int colsize){
-        rows = rowsize;
-        cols = colsize;
-        board = new int[rowsize][colsize];
+        boolean invalid = true;
+        while(invalid){
+            rows = rowsize;
+            cols = colsize;
+            if (rows >= 5 && cols >= 5){
+                winningNum = 4;
+                invalid = false;
+            }
+            else if (rows >= 3 && cols >= 3){
+                winningNum = 3;
+                invalid = false;
+            }
+            else{
+                invalid = true;
+                System.out.println("Sorry those dimensions are invalid, try again");
+                }   
+        }
+        board = new int[rows][colsize];
     }
    //setters
     public void setMode(int num){//////////////////change var name
@@ -49,86 +66,123 @@ public class Game{
     }
     //print the board /////////////////////////////////////////////////////////////edit for fun
     public void printBoard(){
+        System.out.print("\n\t\t");
         for (int j = 0; j < rows; j++){
             for (int k = 0; k < cols; k++){
-                System.out.print(board[j][k]);
+                System.out.print(board[j][k] + " ");
             }  
-            System.out.println();
+            System.out.print("\n\t\t");
         }
+        System.out.println();
     }
     // individual games
-    public void twoPlayer(int move, int player){
+    public void dropPiece(int move, int player){
         //looks at the last row to see if there is a value there or no
-        if (player == 1){
-            for (int j = rows - 1; j >= 0; j--){
-                if (board[j][move - 1] == 0){
-                    board[j][move - 1] = 1;
-                    j = -1; /////////////////could be break but idk if we are allowed 
-                }   
-            }
-        }
-        else if (player == 2){
-            for (int j = rows - 1; j >= 0; j--){
-                if (board[j][move - 1] == 0){
-                    board[j][move - 1] = 2;
-
-                    j = -1;
-                }                
-            }
+        for (int j = rows - 1; j >= 0; j--){
+            if (board[j][move - 1] == 0){
+                board[j][move - 1] = player;
+                j = -1; /////////////////could be break but idk if we are allowed 
+            }   
         }
     }
-    
-    public void computer(int move){
-        //usermove
-        for (int j = rows - 1; j >= 0; j--){
-            if (board[j][move - 1]== 0){
-                board[j][move - 1] = 1;
-                j = -1;
-            }                
-        }
+    public void computer(){//////////////////edit for the ai
         int compmove = (int)(Math.random() * cols) + 1;
-        for (int j = rows - 1; j >= 0; j--){
-            if (board[j][compmove -1] == 0){
-                board[j][compmove -1] = 2;
-                j = -1;
-            }                
-        }
+        dropPiece(compmove, 2);
     } 
+    public int checkmove(int move){//validate move
+        if (!(move > 0 && move <= cols)){ //check if the move is valid (are enough cols and > 0)
+            System.out.println("Sorry that move is either out of bounds or invalid, try again");
+            return -1;
+        }
+        if (board[0][move-1] != 0){ //check if the column is full
+            System.out.println("Column is full, try placing a piece elsewhere");
+            return -1;
+        }
+        return move;
+    }
     
     //check if the match was won 
     public boolean matchWon(){
         boolean won = false;
+        //horizontal check
         for (int j = 0; j < rows; j++){
-            for (int k = 0; k < cols - 3; k++){
-                if (board[j][k] != 0 && board[j][k] == board[j][k + 1] && board[j][k] == board[j][k + 2] && board[j][k] == board[j][k + 3] ){
-                    won = true;
-                    theWinnerIs(board[j][k]);
+            for (int k = 0; k <= cols - winningNum; k++){
+                int piece = board[j][k];
+                if (piece != 0){
+                    boolean check = true;
+                    for (int i = 1; i < winningNum; i++) {
+                        if (board[j][k + i] != piece) {
+                            check = false;
+                            break;
+                        }
+                    }
+                    if (check) {
+                        theWinnerIs(piece);
+                        return true;
+                    }
                 }
             }
         }
-        for (int j = 0; j < rows - 3; j++){
+        //vertical check
+        for (int j = 0; j <= rows - winningNum; j++){
             for (int k = 0; k < cols; k++){
-                if (board[j][k] != 0 && board[j][k] == board[j + 1][k] && board[j][k] == board[j + 2][k] && board[j][k] == board[j + 3][k] ){
-                    won = true;
-                    theWinnerIs(board[j][k]);
+                int piece = board[j][k];
+                if (piece != 0) {
+                    boolean check = true;
+                    for (int i = 1; i < winningNum; i++) {
+                        if (board[j + i][k] != piece) {
+                            check = false;
+                            break;
+                        }
+                    }
+                    if (check) {
+                        theWinnerIs(piece);
+                        return true;
+                    }
                 }
             }
         }
-        for (int j = 0; j < rows - 3; j++){
-            for (int k = 0; k < cols -3; k++){
-                if (board[j][k] != 0 && board[j][k] == board[j + 1][k + 1] && board[j][k] == board[j + 2][k + 2] && board[j][k] == board[j + 3][k + 3] ){
-                    won = true;
-                    theWinnerIs(board[j][k]);
+        //diagonal check (downwards)
+        for (int j = 0; j <= rows - winningNum; j++){
+            for (int k = 0; k < cols - (winningNum - 1); k++){
+                int piece = board[j][k];
+                if (piece != 0) {
+                boolean check = true;
+                for (int i = 1; i < winningNum; i++) {
+                    if (board[j + i][k + i] != piece) {
+                        check = false;
+                        break;
+                    }
+                }
+                if (check) {
+                    theWinnerIs(piece);
+                    return true;
+                }
+            }
+            }
+        }
+        //diagonal check (upwards)
+        for (int j = 0; j <= rows - winningNum; j++){
+            for (int k = winningNum - 1; k < cols; k++){
+                int piece = board[j][k];
+                if (piece != 0) {
+                    boolean check = true;
+                    for (int i = 1; i < winningNum; i++) {
+                        if (board[j + i][k - i] != piece) {
+                            check = false;
+                            break;
+                        }
+                    }
+                    if (check) {
+                        theWinnerIs(piece);
+                        return true;
+                    }
                 }
             }
         }
-        for (int j = 0; j < rows - 3; j++){
-            for (int k = 3; k < cols; k++){
-                if (board[j][k] != 0 && board[j][k] == board[j + 1][k - 1] && board[j][k] == board[j + 2][k - 2] && board[j][k] == board[j + 3][k - 3] ){
-                    won = true;
-                    theWinnerIs(board[j][k]);
-                }
-            }
+        if (tie()){
+            winner = "No one";
+            return true;
         }
         return won;
     }
@@ -147,5 +201,14 @@ public class Game{
             winner = "Computer";
         }
         return winner;
+    }
+    //ties may be added later
+    public boolean tie(){
+        for (int j = 0; j < cols; j++){
+            if (board[0][j] == 0){
+                return false;
+            }
+        }
+        return true;
     }
 }
