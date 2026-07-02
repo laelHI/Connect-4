@@ -8,7 +8,7 @@ A simple Connect 4 game where the goal is to get 4 pieces in a row vertically, h
 
 # Heres the link! Try it yourself: 
 
-https://www.online-java.com/L5Eg7YD8Gx
+https://www.online-java.com/9F23eAAA0J
 
 # Features:
 
