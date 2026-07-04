@@ -6,9 +6,16 @@ A simple Connect 4 game where the goal is to get 4 pieces in a row vertically, h
 
 <img width="775" height="219" alt="Screenshot 2026-07-02 040859" src="https://github.com/user-attachments/assets/3bc651d8-d9c8-4593-90da-d4e0f8bb665b" />
 
-# Heres the link! Try it yourself: 
+# Try it yourself: 
 
-https://www.online-java.com/9F23eAAA0J
+Steps:
+- Download the jar file from github releases
+- For windows search for Command Prompt in the taskbar to open your Command Prompt
+- paste **java -jar Connect-4.jar** to run the code!
+- if that doesnt work type **cd downloads** to change it to the downloads folder *
+- paste **java -jar Connect-4.jar** again and it should work!
+- *so you dont get scared of viruses :')
+  - cd means change directory! directories are like folders so you are moving from your main folder to the downloads folder
 
 # Features:
 
